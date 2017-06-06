@@ -267,6 +267,7 @@ public class Ide7 extends javax.swing.JFrame {
                 lin++;
             }
             imprime_variaveis_assembly(conteudo);
+            System.out.println(sem.assemblyCode);
             preenchedor.atualizarDados(conteudo, cabecalho);
             while(!sem.pilhaEscopo.empty()){
                // System.out.println("Primeiro pop: "+sem.pilhaEscopo.pop());

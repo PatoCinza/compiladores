@@ -17,7 +17,7 @@ public class Semantico implements Constants
     Symbol s_aux = new Symbol();
     
     String nomeIdAtributo;
-    String assemblyCode = "";
+    public String assemblyCode = "";
     
     
     public void executeAction(int action, Token token)	throws SemanticError
