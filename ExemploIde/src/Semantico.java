@@ -16,8 +16,10 @@ public class Semantico implements Constants
     Symbol s = new Symbol();
     Symbol s_aux = new Symbol();
     
-    String nomeIdAtributo;
-    public String assemblyCode = "";
+    private String nomeIdAtributo;
+    public String assemblyCode = "\n\n";
+    private boolean flagExp = false;
+    private String operador;
     
     
     public void executeAction(int action, Token token)	throws SemanticError
@@ -79,6 +81,17 @@ public class Semantico implements Constants
                 //int pos = 0 ;
                 for (Symbol sim : listaSimbolos) {
                     if(sim.id.equals(lexema)){
+                        //assembly
+                        if(!this.flagExp)
+                            this.assemblyCode += "\tLD\t"+lexema+"\n";
+                        else {
+                            if(this.operador.equals("+"))
+                                    this.assemblyCode += "\tADD\t"+lexema+"\n";
+                            if(this.operador.equals("-"))
+                                    this.assemblyCode += "\tSUB\t"+lexema+"\n";
+                            this.flagExp = false;
+                        }
+                        //end assembly
                         Symbol y = sim;
                         listaSimbolos.remove(sim);
                         y.usado = true;
@@ -100,6 +113,10 @@ public class Semantico implements Constants
                 
             case 7:{ //Tipo do operador
                 int operador = 0;
+                //assembly
+                this.flagExp = true;
+                this.operador = lexema;
+                // end assembly
                 switch( lexema ) {
                     case "+":
                         operador = SemanticTable.SUM;
@@ -158,6 +175,16 @@ public class Semantico implements Constants
 //                pilhaExp.push("DEC");
                 pilhaExp.push( SemanticTable.INT );
                 
+                if(!this.flagExp)
+                    this.assemblyCode += "\tLDI\t"+lexema+"\n";
+                else {
+                    if(this.operador.equals("+"))
+                            this.assemblyCode += "\tADDI\t"+lexema+"\n";
+                    if(this.operador.equals("-"))
+                            this.assemblyCode += "\tSUBI\t"+lexema+"\n";
+                    this.flagExp = false;
+                }
+                
                 //System.out.println("12 - Tipo operador: "+"DEC");
                 //System.out.println("Push PILHA: "+pilhaExp.peek());
                 break;
@@ -213,7 +240,7 @@ public class Semantico implements Constants
                 //System.out.println("21 - Encerra função: "+lexema);
                 break;
             case 22: {
-                this.assemblyCode += ("STO "+this.nomeIdAtributo+"\n");
+                this.assemblyCode += ("\tSTO\t"+this.nomeIdAtributo+"\n");
                 //break;
                 //System.out.println("POP PILHA: "+pilhaExp.peek());
                 int opEsq = pilhaExp.pop();
