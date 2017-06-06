@@ -1,0 +1,266 @@
+#Options
+GenerateScanner = true
+GenerateParser = true
+Language = Java
+ScannerName = Lexico
+ParserName = Sintatico
+SemanticName = Semantico
+ScannerCaseSensitive = true
+ScannerTable = Compact
+Input = String
+Parser = SLR
+#RegularDefinitions
+
+#Tokens
+//Recursos
+
+ID : [a-zA-Z_][a-zA-Z0-9]*
+
+//NUM: [0-9]+
+: [\s\t\n\r]
+
+	//Palavras recatadas
+
+CIN = ID : "cin"
+COUT = ID : "cout"
+	//Estruturas
+	//Condicionais
+IF = ID : "if"
+ELSE = ID : "else"
+ELSEIF = ID : "elseif"
+SWITCH = ID : "choose"
+CASE = ID : "case"
+
+	//Laços de Repetição
+FOR = ID : "for"
+WHILE = ID : "while"
+DO = ID : "do"
+FORE = ID : "foreach"
+
+	//Incondicional
+GOTO = ID : "goto"
+
+	//Variáveis
+INT = ID : "int"
+FLOAT = ID :"real"
+STRING = ID : "string"
+NULO = ID : "null"
+BOOLEAN = ID: "bool"
+VAZIO = ID : "void"
+
+	//Atribuição
+ATRIBUI : "="
+
+	//Outras
+RETORNO = ID : "return"
+NOVO = ID : "new"
+PUBLICO = ID : "public"
+PRIVADO = ID : "private"
+BREAK = ID : "break"
+IMPRIME = ID : "shout"
+LER = ID : "get"
+TRY = ID : "try"
+CATCH = ID : "catch"
+FINALLY = ID : "finally"
+DEFAULT = ID : "default"
+PROGRAMA = ID : "programa"
+
+
+
+	//Aritmetico
+SOMA : "+"
+SUBTRA : "-"
+MULT : "*"
+DIV : "/"
+MOD : "%"
+ADD : "++"
+SUB : "--"
+
+
+	//Relacionais
+MAIORQUE : ">"
+MENORQUE : "<"
+MAIORIGUAL : ">="
+MENORIGUAL : "<="
+IGUAL : "=="
+DIFERENTE : "!="
+
+	//Lógicos
+AND : "&&"
+OR : "||"
+NOT : "!"
+OPTER : "?"
+TRUE =  ID: "true"
+FALSE =  ID: "false"
+
+
+	//Bit a Bit
+MULTBYTE : ">>"
+DIVBYTE : "<<"
+NEGA : "~"
+EBYTE : "&"
+OUBYTE : "|"
+
+	//Delimitadores
+PRNTE : "("
+PRNTD : ")"
+CNCTE : "["
+CNCTD : "]"
+CHVE : "{"
+CHVD : "}"
+VIRGULA : ","
+PONTO : "."
+FDI : ";"
+THEN : ":"
+
+	//Comentários
+COMENT : [/][/].*
+MULTICOMENT : /\*([^\*]|[\*]+[^\*/])*\*+/
+
+        //Constantes: 
+HEXA : [0][x]+([0-9A-Fa-f]+)
+DEC : [0-9]*
+BIN : [0][b]+([0-1]+)
+REAL : ([0-9]+)\.([0-9]+)
+TEXTO: [\"][a-zA-Z0-9]*[\"]
+#NonTerminals
+<inicio>
+
+<escopo_inicial>
+<conteudo_inicial>
+
+<conteudo>
+
+<chamadaFuncao>
+<lista>
+
+<comentario>
+
+<modificador>
+
+<declaracao>
+
+<tipo>
+
+<lista_id>
+
+<declaraVetor>
+
+<vetor>
+
+<atribuicao>
+<entradaDados>
+<saidaDados>
+
+<lista_exp>
+
+<declaraFuncao>
+<paramFuncao>
+
+<retorno>
+
+<condicao>
+
+<escopo>
+
+<estruturaIf>
+<estruturaElseif>
+<estruturaElse>
+<estruturaSwitch>
+<corpoSwitch>
+
+<estruturaWhile>
+<estruturaDowhile>
+<estruturaFor>
+
+<exp>
+<exp1>
+<exp2>
+<exp4>
+<exp5>
+<exp6>
+<exp7>
+<exp8>
+<exp9>
+<exp10>
+<op_rel>
+<op_neg>
+<op_bitwise>
+<op_arit_baixa>
+<op_arit_alta>
+<op_arit_mais_alta>
+
+#Grammar
+<inicio> ::= PROGRAMA <escopo_inicial>;
+
+<escopo_inicial> ::= CHVE#3 <conteudo_inicial> #10CHVD |  CHVE#3 #10CHVD;
+<conteudo_inicial> ::= <declaracao> | <declaraFuncao> | <conteudo_inicial> <conteudo_inicial>;
+
+<conteudo> ::=  <declaracao> | <estruturaIf> | <estruturaSwitch> | <atribuicao> | <entradaDados> | <saidaDados> | 
+<estruturaWhile>  | <estruturaDowhile> | <estruturaFor> | <retorno> | <chamadaFuncao> | <declaraFuncao> | <comentario> | <conteudo> <conteudo>;
+
+<chamadaFuncao> ::= ID PRNTE <lista> PRNTD FDI | ID PRNTE î PRNTD FDI;
+<lista> ::= <exp> | <exp> VIRGULA <lista>; 
+
+<comentario> ::= COMENT | MULTICOMENT;
+
+<modificador> ::= PUBLICO | PRIVADO;
+
+
+<declaracao>  ::=  <tipo> <lista_id>#18 FDI | <declaraVetor>;
+<tipo> ::= INT #1 | FLOAT #1 | STRING #1 | VAZIO #1 | BOOLEAN#1 ;
+<lista_id> ::= <lista_id> VIRGULA ID#4 | ID#4 | ID#4 ATRIBUI <exp>#8 | <lista_id> VIRGULA ID#4  <vetor>| ID#4  <vetor>;
+
+<declaraVetor> ::= <tipo> ID#19#4 <vetor>#18 FDI;
+
+<vetor> ::= CNCTE <exp> CNCTD | CNCTE î CNCTD;
+
+<atribuicao> ::= ID#8 ATRIBUI <exp> #22FDI | ID#8 <vetor> ATRIBUI <exp> #22FDI | ID#8 ATRIBUI <chamadaFuncao>#22| ID#8 <vetor> ATRIBUI <chamadaFuncao>#22;
+
+<entradaDados> ::= CIN MULTBYTE ID FDI| CIN MULTBYTE ID <vetor> FDI;
+<saidaDados> ::= COUT DIVBYTE <lista_exp> FDI | COUT DIVBYTE ID <vetor> FDI;
+<lista_exp> ::= <exp> | <exp> VIRGULA <lista_exp>;
+
+<declaraFuncao> ::= <modificador> <tipo> ID#2 PRNTE <paramFuncao>#21 PRNTD <escopo>;
+<paramFuncao> ::= <tipo> ID#20 VIRGULA <paramFuncao> | <tipo> ID#20 | <tipo> ID#19#20 <vetor> | î;
+
+<retorno> ::= RETORNO <exp> FDI;
+
+<condicao> ::= PRNTE <exp> PRNTD;
+
+<escopo> ::= CHVE#3 <conteudo> #10CHVD |  CHVE#3 #10CHVD;
+
+<estruturaIf> ::= IF <condicao> <escopo>  | IF <condicao> <escopo> <estruturaElseif> | IF <condicao> <escopo> <estruturaElse>;
+<estruturaElseif> ::= ELSEIF <condicao> <escopo> | ELSEIF <condicao> <escopo> <estruturaElse> | ELSEIF <condicao>  <escopo> <estruturaElseif>;
+<estruturaElse> ::= ELSE <escopo>;
+
+<estruturaSwitch> ::= SWITCH PRNTE ID PRNTD CHVE <corpoSwitch> CHVD;
+<corpoSwitch> ::= CASE <exp> THEN <conteudo> <corpoSwitch>|  CASE <exp> THEN <conteudo> | BREAK FDI <corpoSwitch> | BREAK FDI | DEFAULT THEN <conteudo>;
+
+<estruturaWhile> ::= WHILE <condicao> <escopo>;
+<estruturaDowhile> ::= DO <escopo> WHILE <condicao> FDI;
+<estruturaFor> ::= FOR PRNTE <atribuicao>  <exp> FDI ID ATRIBUI <exp> PRNTD <escopo> | FOR PRNTE <atribuicao> FDI ID ATRIBUI <exp> PRNTD <escopo>;
+
+
+
+
+<exp>  ::= <exp> OR <exp1>#50 | <exp1>;
+<exp1> ::= <exp1> AND <exp2>#51 | <exp2>;
+<exp2> ::= <exp2> OUBYTE <exp4>#52 | <exp4>;
+<exp4> ::= <exp4> EBYTE <exp5>#53 | <exp5>;
+<exp5> ::= <exp5> <op_rel> <exp6>#54 | <exp6>;
+<exp6> ::= <exp6> <op_bitwise> <exp7>#55 | <exp7>;
+<exp7> ::= <exp7> <op_arit_baixa> <exp8>#56 | <exp8>;
+<exp8> ::= <exp8> <op_arit_alta> <exp9>#57 | <exp9> ;
+<exp9> ::= <op_neg> <exp10> | <exp10>;
+<exp10> ::= DEC#12 | REAL#13 | ID#6 | ID#6 <vetor> | PRNTE#16 <exp> PRNTD#17 | TEXTO#14 | BIN#12 | HEXA#12 | TRUE#15 | FALSE#15 ;
+
+<op_rel> ::= MAIORQUE#7 | MENORQUE#7 | MAIORIGUAL#7 | MENORIGUAL#7 | IGUAL#7 | DIFERENTE#7; 
+<op_neg> ::= SUBTRA#7 | NEGA#7 | NOT#7;
+<op_bitwise> ::= DIVBYTE#7 | MULTBYTE#7;
+<op_arit_baixa> ::= SOMA#7 | SUBTRA#7;
+<op_arit_alta> ::= MULT#7 | DIV#7 | MOD#7;
+
+
+//Exemplo com tudo para ser usado no simulador
+// -x + 8.8 - !x * 2 / ~y % 3 << 7 != y >> 3 || (x <= 3 && y > 8) | p & (h ^ g)
