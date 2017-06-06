@@ -16,6 +16,9 @@ public class Semantico implements Constants
     Symbol s = new Symbol();
     Symbol s_aux = new Symbol();
     
+    String nomeIdAtributo;
+    String assemblyCode = "";
+    
     
     public void executeAction(int action, Token token)	throws SemanticError
     {
@@ -120,6 +123,7 @@ public class Semantico implements Constants
                             s_aux = sss;
                             listaSimbolos.remove(sss);
                             naoEncontrou = false;
+                            this.nomeIdAtributo = lexema;
                             switch(sss.tipo){
                             case "int": pilhaExp.push(SemanticTable.INT); break;
                             case "string": pilhaExp.push(SemanticTable.STR); break;
@@ -132,22 +136,9 @@ public class Semantico implements Constants
                             naoEncontrou = true;
                        }
                     }
-//                        switch(sss.tipo){
-//                            case "int": pilhaExp.push(SemanticTable.INT); break;
-//                            case "string": pilhaExp.push(SemanticTable.STR); break;
-//                            case "real": pilhaExp.push(SemanticTable.FLO); break;
-//                            case "bool": pilhaExp.push(SemanticTable.BOO); break;
-//                        }
-//                            
-//                        }
-//                    }
                     if(naoEncontrou){
                       throw new SemanticError("Variavel não declarada");
                     }
-//                
-                //capturar lexema do tipo que esta sendo atrabuido a variavel
-                        //papel  da #12.
-                //verificar se o escopo está correto
                         if(pilhaEscopo.search(s_aux.escopo)==-1){
                              
                              throw new SemanticError("Escopo da variavel incorreto");
@@ -155,32 +146,6 @@ public class Semantico implements Constants
                             listaSimbolos.add(s_aux);
                             s_aux.inicializado=true;
                         }
-                
-                
-//                String aux;
-//                String tipo1;
-//                String op;
-//                String tipo2;
-//                while(!pilhaExp.empty()){
-//                    tipo1 = pilhaExp.pop().toString();
-//                    if(pilhaExp.empty()){
-//                        //alterar tabela de simbolos
-//                        String result = tabela.atribType(tipo1, s_aux.tipo);
-//                        if(!result.equals("ERR")){
-//                            for (Symbol sss : listaSimbolos) {
-//                                if(sss.id.equals(s_aux.tipo)){
-//                                    sss.inicializado = true;
-//                                }
-//                            }
-//                        }
-//                        break;
-//                    }
-//                    op = pilhaExp.pop().toString();
-//                    tipo2 = pilhaExp.pop().toString();
-//                    String resultado = tabela.resultType(tipo1, tipo2, op);
-//                    pilhaExp.push(resultado);
-//                }
-                //s_aux = new Symbol();
                 
                 //System.out.println("8 - Atribuição, ID da variavel: "+lexema);
                 break;
@@ -247,53 +212,8 @@ public class Semantico implements Constants
                 //pilhaEscopo.pop();
                 //System.out.println("21 - Encerra função: "+lexema);
                 break;
-            case 22: {//Encerra atribuição
-                //capturar tipo do resultado
-//                String op1, op, op2, result="";
-//                try{
-//                    op1 = pilhaExp.pop().toString();
-//                    result = op1;
-//                    try{
-//                        op = pilhaExp.pop().toString();
-//                        try{
-//                            op2 = pilhaExp.pop().toString();
-////                            result = tabela.resultType(op1, op2, op);
-//                                
-//                                System.out.println(result);
-//                            if("ERR".equals(result)){
-//                                System.out.println("FLAG");
-//                                throw new SemanticError("Tipos incompativeis!");
-//                            }
-//                        }catch(Exception e){
-//                             throw new SemanticError("Atribuição invalida, algum operador incorreto!");
-//                        }
-//                    }catch(Exception e){
-//                        //tabela.resultType(pilhaExp.pop().toString(), pilhaExp.pop().toString(), pilhaExp.pop().toString());
-//                    }
-//                }catch(Exception e){
-//                    throw new SemanticError("Atribuição invalida!");
-//                }
-//                
-//                
-//                
-//               // tabela.resultType(pilhaExp.pop().toString(), pilhaExp.pop().toString(), pilhaExp.pop().toString());
-//                
-//                
-//                //compatilibdade de tipos
-//                try{
-//                    System.out.println("Comparando: "+s_aux.tipo+" e "+result);
-//                    if(tabela.atribType(s_aux.tipo, result).equals("OK_")){
-//                        listaSimbolos.add(s_aux);
-//                        s_aux = new Symbol();
-//                    }else if(tabela.atribType(s_aux.tipo, op1).equals("ERR")){
-//                        throw new SemanticError("Tipos incorretos!");
-//                    }else{
-//                        throw new SemanticError("Tipo atribuido invalido!");
-//                    }
-//                }catch(Exception ex){
-//                    throw new SemanticError("Variavel não declarada!");
-//                }
-                
+            case 22: {
+                this.assemblyCode += ("STO "+this.nomeIdAtributo+"\n");
                 //break;
                 //System.out.println("POP PILHA: "+pilhaExp.peek());
                 int opEsq = pilhaExp.pop();
@@ -305,7 +225,7 @@ public class Semantico implements Constants
                     throw new SemanticError("Tipos incompativeis na atribuicao",token.getPosition());
                 }
                 if( atribType == SemanticTable.WAR ) {
-                    System.out.println("WARNING na atribuicao");
+                    //System.out.println("WARNING na atribuicao");
                 }
               
                 break;
